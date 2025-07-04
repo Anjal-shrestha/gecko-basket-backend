@@ -11,5 +11,16 @@ export const registerSchema = z.object({
     password: z
       .string({ required_error: 'Password is required' })
       .min(6, 'Password must be at least 6 characters long'),
+      role: z.enum(['user', 'admin']).optional(),
+  }),
+});
+export const loginSchema = z.object({
+  body: z.object({
+    email: z
+      .string({ required_error: 'Email is required' })
+      .email('A valid email is required to login'),
+    password: z
+      .string({ required_error: 'Password is required' })
+      .min(1, 'Password is required'),
   }),
 });

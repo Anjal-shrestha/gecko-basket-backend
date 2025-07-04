@@ -1,10 +1,13 @@
-import { Router } from 'express';
-import { registerUser } from '../controllers/auth.controller';
-import asyncHandler from '../utils/asyncHandler';
+import express from 'express';
+// Import the new loginUser controller
+import { registerUser, loginUser } from '../controllers/auth.controller';
 
-const router = Router();
+const router = express.Router();
 
-// Wrap the controller with asyncHandler
-router.post('/register', asyncHandler(registerUser));
+// Existing registration route
+router.post('/register', registerUser);
+
+// === ADD THIS NEW LOGIN ROUTE ===
+router.post('/login', loginUser);
 
 export default router;

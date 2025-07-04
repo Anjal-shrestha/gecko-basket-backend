@@ -4,7 +4,9 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { ZodError } from 'zod';
 import authRouter from './routes/auth.route';
-
+import userRouter from './routes/user.route';
+import adminRouter from './routes/admin.route';
+import productRouter from './routes/product.route'; 
 const app: Application = express();
 
 app.use(cors());
@@ -15,7 +17,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // API Routes
 app.use('/api/v1/auth', authRouter);
-
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/admin', adminRouter);
+app.use('/api/v1/products', productRouter);
 // Test Route
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({ message: 'Welcome to the Gecko-Basket API!' });
