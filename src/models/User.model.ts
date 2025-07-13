@@ -1,14 +1,15 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose';
 
-// Define the interface for the User document
 export interface IUser extends Document {
+  _id: Types.ObjectId; // ✅ Explicitly define this
   name: string;
   email: string;
-  password?: string; // Password is optional on the document type, as we won't always return it
+  password?: string;
   role: 'user' | 'admin';
   createdAt: Date;
   updatedAt: Date;
 }
+
 
 const UserSchema: Schema = new Schema(
   {

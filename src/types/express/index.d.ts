@@ -1,12 +1,12 @@
-
-
+// Import the IUser interface from your user model
 import { IUser } from '../../models/User.model';
 
-// Extend the Express Request interface
+// This block tells TypeScript to add a new property to the existing Request interface
 declare global {
   namespace Express {
     export interface Request {
-      user?: IUser; // Add the 'user' property, making it optional
+      // The 'user' property is now defined as being of type IUser, but optional
+      user?: IUser;
     }
   }
 }
