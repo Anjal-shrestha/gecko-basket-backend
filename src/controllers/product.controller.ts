@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import Product, { IReview } from '../models/Product.model';
-import { IUser } from '../models/User.model'; // 1. Import the IUser type
+import { IUser } from '../models/User.model'; // 1. Import the IUser interface
 
 // 2. Define a custom Request type that includes the 'user' property
 interface IAuthRequest extends Request {
-  user?: IUser; // Tell TypeScript that 'user' can exist on a request and is of type IUser
+  user?: IUser; // This tells TypeScript that req.user can exist and is of type IUser
 }
 
 // @desc    Create a product
@@ -20,6 +20,7 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
     }
     
     const imageUrl = req.file.path;
+
     const product = new Product({
       name, slug, description,
       price: Number(price),
@@ -71,7 +72,7 @@ export const getProductBySlug = async (req: Request, res: Response) => {
 // @desc    Update a product
 // @route   PUT /api/v1/products/:id
 // @access  Private/Admin
-export const updateProduct = async (req: IAuthRequest, res: Response, next: NextFunction) => {
+export const updateProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -90,7 +91,7 @@ export const updateProduct = async (req: IAuthRequest, res: Response, next: Next
 // @desc    Delete a product
 // @route   DELETE /api/v1/products/:id
 // @access  Private/Admin
-export const deleteProduct = async (req: IAuthRequest, res: Response, next: NextFunction) => {
+export const deleteProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const product = await Product.findById(req.params.id);
     if (product) {
@@ -107,44 +108,48 @@ export const deleteProduct = async (req: IAuthRequest, res: Response, next: Next
 // @desc    Create a new review
 // @route   POST /api/v1/products/:id/reviews
 // @access  Private
-// 3. Use the new IAuthRequest interface here
+// 3. Use the new IAuthRequest interface for the 'req' parameter
 export const createProductReview = async (req: IAuthRequest, res: Response, next: NextFunction) => {
   const { rating, comment } = req.body;
 
   try {
+    // TypeScript now understands req.user
     if (!req.user) {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
     const product = await Product.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
+
+    if (product) {
+      // The '!' tells TypeScript "we know user is not null here"
+      const alreadyReviewed = product.reviews.find(
+        (r) => r.user.toString() === req.user!._id.toString()
+      );
+
+      if (alreadyReviewed) {
+        return res.status(400).json({ message: 'Product already reviewed' });
+      }
+
+      // No more errors here because IAuthRequest defines req.user and its properties
+      const review = {
+        name: req.user.name,
+        rating: Number(rating),
+        comment,
+        user: req.user._id,
+      };
+
+      product.reviews.push(review as IReview);
+
+      product.numReviews = product.reviews.length;
+      product.rating =
+        product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+        product.reviews.length;
+
+      await product.save();
+      res.status(201).json({ message: 'Review added' });
+    } else {
+      res.status(404).json({ message: 'Product not found' });
     }
-
-    const user = req.user as IUser;
-
-    const alreadyReviewed = product.reviews.find(
-      (r) => r.user.toString() === user._id.toString()
-    );
-
-    if (alreadyReviewed) {
-      return res.status(400).json({ message: 'Product already reviewed' });
-    }
-
-    const review: Partial<IReview> = {
-      name: user.name,
-      rating: Number(rating),
-      comment,
-      user: user._id,
-    };
-
-    product.reviews.push(review as IReview);
-    product.numReviews = product.reviews.length;
-    product.rating =
-      product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length;
-
-    await product.save();
-    res.status(201).json({ message: 'Review added' });
   } catch (error) {
     next(error);
   }

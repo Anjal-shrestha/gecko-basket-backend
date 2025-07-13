@@ -1,11 +1,25 @@
 import express from 'express';
-import { createOrder, getMyOrders } from '../controllers/order.controller';
-import { protect } from '../middleware/auth.middleware';
+import {
+  createOrder,
+  getMyOrders,
+  getAllOrders, // 1. Import the new functions
+  updateOrderToDelivered,
+} from '../controllers/order.controller';
+import { protect, isAdmin } from '../middleware/auth.middleware';
 
 const router = express.Router();
 
-// Chain the routes for creating an order and getting the user's orders
-router.route('/').post(protect, createOrder);
+// This route now also handles getting all orders (for admins)
+router.route('/')
+  .post(protect, createOrder)
+  .get(protect, isAdmin, getAllOrders); // <-- ADD THIS
+
 router.route('/myorders').get(protect, getMyOrders);
+
+// Add the new route to mark an order as delivered
+router.route('/:id/deliver').put(protect, isAdmin, updateOrderToDelivered);
+
+// We'll also need a route to get a single order by ID
+// router.route('/:id').get(protect, getOrderById); // You can add this later
 
 export default router;

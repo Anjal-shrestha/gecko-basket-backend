@@ -67,3 +67,28 @@ export const getMyOrders = async (req: Request, res: Response) => {
   const orders = await Order.find({ user: req.user?._id });
   res.json(orders);
 };
+export const getAllOrders = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // Find all orders and populate the 'user' field with their id and name
+    const orders = await Order.find({}).populate('user', 'id name');
+    res.json(orders);
+  } catch (error) {
+    next(error);
+  }
+};export const updateOrderToDelivered = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+      order.isDelivered = true;
+      order.deliveredAt = new Date();
+
+      const updatedOrder = await order.save();
+      res.json(updatedOrder);
+    } else {
+      res.status(404).json({ message: 'Order not found' });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
