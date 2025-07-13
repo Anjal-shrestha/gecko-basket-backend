@@ -6,36 +6,37 @@ import Product from '../models/Product.model';
 // @access  Private/Admin
 export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // When using multer, text fields are in req.body and the file is in req.file
     const { name, slug, description, price, brand, category, countInStock } = req.body;
 
-    // Check for the uploaded file from multer
     if (!req.file) {
+      // THE FIX IS HERE: The `return` keyword is removed from this line.
       res.status(400).json({ message: 'Product image is required.' });
-      return;
+      return; // A standalone return is used to exit the function.
     }
     
-    // This is the secure URL from Cloudinary
     const imageUrl = req.file.path;
 
     const product = new Product({
       name,
       slug,
       description,
-      price: Number(price), // Ensure price is cast to a Number
+      price: Number(price),
       brand,
       category,
-      countInStock: Number(countInStock), // Ensure stock is a Number
+      countInStock: Number(countInStock),
       image: imageUrl,
     });
 
     const createdProduct = await product.save();
     res.status(201).json(createdProduct);
   } catch (error) {
-    // The global error handler will catch any validation errors from Mongoose
     next(error);
   }
 };
+
+
+
+
 
 
 // @desc    Get all products

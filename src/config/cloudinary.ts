@@ -12,8 +12,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (req, file) => {
     return {
-      folder: 'gecko-basket-products', // Folder name in Cloudinary
-      // You can add transformations or other parameters here
+      folder: 'gecko-basket-products',
     };
   },
 });

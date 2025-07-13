@@ -23,7 +23,7 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/admin', adminRouter);
 app.use('/api/v1/products', productRouter);
-app.use('/api/v1/orders', OrderRouter); // Assuming you have an order route set up
+app.use('/api/v1/orders', OrderRouter); 
 // Test Route
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({ message: 'Welcome to the Gecko-Basket API!' });
