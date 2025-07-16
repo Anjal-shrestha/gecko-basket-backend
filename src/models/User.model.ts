@@ -1,15 +1,23 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 
+// Interface for a single item in the user's cart
+export interface ICartItem {
+  product: Types.ObjectId;
+  quantity: number;
+}
+
+// The complete interface for a User document
 export interface IUser extends Document {
-  _id: Types.ObjectId; // ✅ Explicitly define this
+  _id: Types.ObjectId;
   name: string;
   email: string;
   password?: string;
   role: 'user' | 'admin';
+  wishlist: Types.ObjectId[];
+  cart: ICartItem[];
   createdAt: Date;
   updatedAt: Date;
 }
-
 
 const UserSchema: Schema = new Schema(
   {
@@ -21,26 +29,45 @@ const UserSchema: Schema = new Schema(
     email: {
       type: String,
       required: true,
-      unique: true, // No two users can have the same email
+      unique: true,
       trim: true,
       lowercase: true,
     },
     password: {
       type: String,
       required: true,
-      select: false, // By default, don't include the password in query results
+      select: false, // Good for security
     },
     role: {
       type: String,
       enum: ['user', 'admin'],
       default: 'user',
     },
+    wishlist: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+      },
+    ],
+    cart: [
+      {
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Product',
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+          min: 1,
+          default: 1,
+        },
+      },
+    ],
   },
   {
-    // Add createdAt and updatedAt timestamps automatically
-    timestamps: true,
+    timestamps: true, // Automatically adds createdAt and updatedAt
   }
 );
 
-// Create and export the User model
 export default mongoose.model<IUser>('User', UserSchema);

@@ -9,7 +9,10 @@ import authRouter from './routes/auth.route';
 import userRouter from './routes/user.route';
 import adminRouter from './routes/admin.route';
 import productRouter from './routes/product.route'; 
-import OrderRouter from './routes/order.route'; // Assuming you have an order route set up
+import OrderRouter from './routes/order.route'; 
+import orderRouter from './routes/order.route';
+import wishlistRouter from './routes/wishlist.route'
+import cartRouter from './routes/cart.route';
 const app: Application = express();
 
 app.use(cors());
@@ -23,7 +26,10 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/admin', adminRouter);
 app.use('/api/v1/products', productRouter);
-app.use('/api/v1/orders', OrderRouter); 
+app.use('/api/v1/orders', OrderRouter);
+app.use('/api/v1/cart', cartRouter); 
+
+app.use('/api/v1/wishlist', wishlistRouter);
 // Test Route
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({ message: 'Welcome to the Gecko-Basket API!' });
