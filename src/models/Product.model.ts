@@ -21,7 +21,8 @@ export interface IProduct extends Document {
   countInStock: number;
   rating: number;        // Average rating
   numReviews: number;    // Total number of reviews
-  reviews: IReview[];    // Array of review sub-documents
+  reviews: IReview[]
+  tags: string[];     // Array of review sub-documents
   createdAt: Date;
   updatedAt: Date;
 }
@@ -50,7 +51,8 @@ const ProductSchema: Schema = new Schema(
     countInStock: { type: Number, required: true, default: 0 },
     rating: { type: Number, required: true, default: 0 },
     numReviews: { type: Number, required: true, default: 0 },
-    reviews: [reviewSchema], // Embed the review schema here
+    reviews: [reviewSchema], 
+    tags: [{ type: String }],// Embed the review schema here
   },
   {
     timestamps: true,

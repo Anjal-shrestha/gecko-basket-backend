@@ -12,7 +12,7 @@ interface IAuthRequest extends Request {
 // @access  Private/Admin
 export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, slug, description, price, originalPrice, brand, category, countInStock } = req.body;
+    const { name, slug, description, price, originalPrice, brand, category, countInStock,tags } = req.body;
     
     if (!req.file) {
       res.status(400).json({ message: 'Product image is required.' });
@@ -28,6 +28,7 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
       brand, category,
       countInStock: Number(countInStock),
       image: imageUrl,
+      tags: tags || [], 
     });
 
     const createdProduct = await product.save();
@@ -129,14 +130,14 @@ export const createProductReview = async (req: IAuthRequest, res: Response, next
       if (alreadyReviewed) {
         return res.status(400).json({ message: 'Product already reviewed' });
       }
-
+ 
       // No more errors here because IAuthRequest defines req.user and its properties
       const review = {
         name: req.user.name,
         rating: Number(rating),
         comment,
         user: req.user._id,
-      };
+      };4
 
       product.reviews.push(review as IReview);
 
