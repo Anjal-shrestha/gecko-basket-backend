@@ -3,7 +3,8 @@ import {
   createOrder,
   getMyOrders,
   getAllOrders, // 1. Import the new functions
-  updateOrderToDelivered,
+
+  updateOrderStatus
 } from '../controllers/order.controller';
 import { protect, isAdmin } from '../middleware/auth.middleware';
 
@@ -16,9 +17,7 @@ router.route('/')
 
 router.route('/myorders').get(protect, getMyOrders);
 
-// Add the new route to mark an order as delivered
-router.route('/:id/deliver').put(protect, isAdmin, updateOrderToDelivered);
-
+router.route('/:id/status').put(protect, isAdmin, updateOrderStatus);
 // We'll also need a route to get a single order by ID
 // router.route('/:id').get(protect, getOrderById); // You can add this later
 

@@ -9,7 +9,7 @@ export interface IOrderItem extends Document {
   product: Types.ObjectId; // Reference to the actual product
 }
 
-// Interface for the main Order document
+// Interface for the main Order document, with the new 'status' field
 export interface IOrder extends Document {
   user: Types.ObjectId;
   orderItems: IOrderItem[];
@@ -26,8 +26,7 @@ export interface IOrder extends Document {
   totalPrice: number;
   isPaid: boolean;
   paidAt?: Date;
-  isDelivered: boolean;
-  deliveredAt?: Date;
+  status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled'; // ✅ Updated field
 }
 
 const OrderSchema: Schema = new Schema(
@@ -88,13 +87,12 @@ const OrderSchema: Schema = new Schema(
     paidAt: {
       type: Date,
     },
-    isDelivered: {
-      type: Boolean,
+    // ✅ Replaced 'isDelivered' and 'deliveredAt' with the new 'status' field
+    status: {
+      type: String,
       required: true,
-      default: false,
-    },
-    deliveredAt: {
-      type: Date,
+      enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled'],
+      default: 'Processing',
     },
   },
   {
