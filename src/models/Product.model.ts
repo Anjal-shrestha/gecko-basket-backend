@@ -22,7 +22,9 @@ export interface IProduct extends Document {
   rating: number;        // Average rating
   numReviews: number;    // Total number of reviews
   reviews: IReview[]
-  tags: string[];     // Array of review sub-documents
+  
+  tags: string[]; 
+  isFeatured: boolean;    // Array of review sub-documents
   createdAt: Date;
   updatedAt: Date;
 }
@@ -52,7 +54,11 @@ const ProductSchema: Schema = new Schema(
     rating: { type: Number, required: true, default: 0 },
     numReviews: { type: Number, required: true, default: 0 },
     reviews: [reviewSchema], 
-    tags: [{ type: String }],// Embed the review schema here
+    tags: [{ type: String }],
+    isFeatured: { // <-- ADD THIS BLOCK
+      type: Boolean,
+      default: false,
+    },// Embed the review schema here
   },
   {
     timestamps: true,

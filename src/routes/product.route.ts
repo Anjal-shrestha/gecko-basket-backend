@@ -6,11 +6,13 @@ import {
   getProductBySlug,
   updateProduct,
   deleteProduct,
+  getFeaturedProducts
 } from '../controllers/product.controller';
 import { protect, isAdmin } from '../middleware/auth.middleware';
 import { upload } from '../config/cloudinary';
 
 const router = express.Router();
+router.route('/featured').get(getFeaturedProducts);
 
 // Routes for getting all products and creating a single product
 router.route('/')
