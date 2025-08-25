@@ -8,23 +8,24 @@ export interface IReview extends Document {
   comment: string;
 }
 
-// Updated interface for the Product document
+// The complete interface for a Product document
 export interface IProduct extends Document {
   name: string;
   slug: string;
   description: string;
-  price: number;         // Sale price
-  originalPrice: number; // Actual, non-sale price
+  price: number;
+  originalPrice: number;
   image: string;
   brand: string;
   category: string;
   countInStock: number;
-  rating: number;        // Average rating
-  numReviews: number;    // Total number of reviews
-  reviews: IReview[]
-  
-  tags: string[]; 
-  isFeatured: boolean;    // Array of review sub-documents
+  rating: number;
+  numReviews: number;
+  reviews: IReview[];
+  tags: string[];
+  isFeatured: boolean;
+  weight: number;
+  weightUnit: 'kg' | 'g';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,19 +33,19 @@ export interface IProduct extends Document {
 // Sub-schema for individual reviews
 const reviewSchema: Schema = new Schema({
   user: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
-  name: { type: String, required: true }, // User's name
+  name: { type: String, required: true },
   rating: { type: Number, required: true },
   comment: { type: String, required: true },
 }, {
   timestamps: true,
 });
 
-
+// The main Product Schema
 const ProductSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
-    description: { type: String, required:true },
+    description: { type: String, required: true },
     price: { type: Number, required: true, default: 0 },
     originalPrice: { type: Number, required: true, default: 0 },
     image: { type: String, required: true },
@@ -53,12 +54,23 @@ const ProductSchema: Schema = new Schema(
     countInStock: { type: Number, required: true, default: 0 },
     rating: { type: Number, required: true, default: 0 },
     numReviews: { type: Number, required: true, default: 0 },
-    reviews: [reviewSchema], 
+    reviews: [reviewSchema],
     tags: [{ type: String }],
-    isFeatured: { // <-- ADD THIS BLOCK
+    isFeatured: {
       type: Boolean,
       default: false,
-    },// Embed the review schema here
+    },
+    weight: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    weightUnit: {
+      type: String,
+      required: true,
+      enum: ['kg', 'g'],
+      default: 'g',
+    },
   },
   {
     timestamps: true,

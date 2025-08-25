@@ -83,7 +83,7 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
 // @access  Private/Admin
 export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, slug, description, price, originalPrice, brand, category, countInStock,tags } = req.body;
+    const { name, slug, description, price, originalPrice, brand, category, countInStock,tags, weight, weightUnit } = req.body;
     
     if (!req.file) {
       res.status(400).json({ message: 'Product image is required.' });
@@ -100,6 +100,8 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
       countInStock: Number(countInStock),
       image: imageUrl,
       tags: tags || [], 
+      weight: Number(weight) || 0,   
+      weightUnit: weightUnit || 'g',
     });
 
     const createdProduct = await product.save();
